@@ -1,183 +1,267 @@
 ## Business Workflow
 
-The project follows a realistic proactive Institutional Sales process:
+The project follows a proactive **Global Markets Sales / Client Coverage** workflow:
 
 ```text
-Live Market Data + Recent News
+Live Market Data + Financial News
               ↓
-      Market Event Detection
+     Cross-Asset Event Detection
               ↓
- Commercial Market Interpretation
+     Market Intelligence Layer
               ↓
- Client Profile + Recent History
+ Client Profiles + Recent History
               ↓
-      Eligibility Screening
+   Mandate & Eligibility Screening
               ↓
-   Event × Client Matching
+      Event × Client Matching
               ↓
-     Ranked Client Shortlist
+     ML Opportunity Ranking
               ↓
  Explainable "Who Should I Call?"
 ```
 
-The result is a ranked list of clients for each market event, together with the main reasons why each opportunity was surfaced.
+The platform converts each detected Market Event into a **ranked Top-5/10 client shortlist**, together with the key exposures, client needs and market evidence supporting the opportunity.
 
 ---
 
 ## What the Project Adds
 
-Institutional Sales teams already have access to large amounts of market information and client data.
+Global Markets Sales teams already have access to large volumes of market information, research and client data.
 
-The real challenge is **connecting the two efficiently**.
+The challenge is turning these inputs into **prioritized, client-specific commercial opportunities**.
 
-This project automates the first screening layer by answering questions such as:
+The platform automates the first coverage-screening layer across:
+
+- **30+ cross-asset market series**
+- **60 synthetic institutional client profiles**
+- **1,400+ benchmark Event × Client combinations**
+- Equities, Rates, FX, Commodities and Volatility
+
+It helps answer:
 
 - Which clients are exposed to the current market move?
-- Which clients recently expressed a related need?
-- Which opportunities are compatible with the client's mandate and risk profile?
-- Which clients should be reviewed first?
-- What market evidence supports the opportunity?
+- Which clients recently expressed a related investment or hedging need?
+- Is the opportunity compatible with the client's mandate and risk constraints?
+- Which accounts should Sales review first?
+- What market evidence supports the recommendation?
 
-The platform therefore converts **market information into client-specific commercial relevance**.
+The objective is therefore not to predict client conversion, but to transform **Market Intelligence into explainable Client Coverage prioritisation**.
 
 ---
 
 ## Architecture
 
-The system is split into two main modules.
+The platform is built around two connected modules.
 
-### 1. Market Event Generator
+### 1. Cross-Asset Market Event Generator
 
-The first module monitors a configurable cross-asset universe and generates structured Market Events.
+The first module monitors **30+ market series** and transforms statistically significant market moves into structured Market Events.
 
 It combines:
 
-- Yahoo Finance market data
-- Recent financial news
-- Return and yield statistics
-- Z-scores
+- Live / recent market data from Yahoo Finance
+- Financial news retrieval
+- 1D / 5D market moves
+- Z-scores and historical percentiles
 - Realised volatility
-- Price percentiles
+- Yield moves for Rates
+- ATR / volume signals for Commodities
 - Source-quality classification
-- Lightweight NLP for themes and catalysts
+- NLP-based theme and catalyst extraction
 
-The output is a structured `market_events.csv` containing the event, its statistical strength, market narrative, catalysts, and supporting sources.
+Each refresh can surface up to **30 current Market Events**, covering areas such as:
 
-### 2. Client Opportunity Matching
+- Broad Equity indices
+- AI / Technology
+- Semiconductors
+- FX
+- Commodities
+- Volatility
+- Government Rates
 
-The second module compares each Market Event with the institutional coverage book.
+The output is a structured and auditable `market_events.csv` containing:
 
-Client information includes:
+```text
+Market Move
++ Statistical Strength
++ Market Theme
++ Catalysts
++ Sales Themes
++ Supporting Sources
+```
 
-- Asset classes
-- Exposures
+This becomes the input of the Client Opportunity Matching workflow.
+
+---
+
+### 2. Client Coverage & Opportunity Matching
+
+Each Market Event is matched against a coverage universe of **60 synthetic institutional profiles**.
+
+The client layer combines:
+
+- Asset-class activity
+- Market exposures
 - Regions and currencies
 - Investment objectives
 - Hedging needs
 - Risk profile
-- Recent client history
-- Client archetypes
-- Explicit restrictions
+- Recent client interactions
+- Client archetype priors
+- Explicit mandate restrictions
 
-Hard eligibility rules are applied first. Only eligible **Event × Client** pairs are then ranked.
+Before any ML scoring is performed, the system applies **hard eligibility rules** to remove incompatible Event × Client combinations.
 
-The matching engine builds interpretable pair features such as:
+Eligible pairs are then represented through interpretable matching features including:
 
-- Asset-class match
-- Exposure relevance
-- Region and currency match
-- Commercial-need alignment
-- Directional relevance
+- Asset-class relevance
+- Exposure overlap
+- Region / currency alignment
+- Investment-objective alignment
+- Hedging-need relevance
+- Directional exposure
 - Semantic similarity
 - Recent-need similarity
-- Recency
+- Client recency
 - Risk headroom
 - Archetype relevance
 
-The final ranking is produced using **XGBoost Learning-to-Rank**, trained by Market Event groups.
+This separates **hard mandate compatibility** from **soft commercial relevance**.
 
 ---
 
-## Models and Methods
+## Opportunity Ranking
 
-The project uses a deliberately explainable stack:
+The final prioritisation is performed using **XGBoost Learning-to-Rank**.
 
-- **Statistical market signals** for event detection
-- **NLP and semantic representations** for textual relevance
-- **Deterministic rules** for hard eligibility
-- **XGBoost Learning-to-Rank** for client prioritisation
-- **Bootstrap rank stability** for selection confidence
+Rather than predicting whether a client will trade, the model solves a more realistic Sales problem:
 
-The model is evaluated using:
+> **For this Market Event, which eligible clients should appear first in the coverage shortlist?**
+
+Training observations are structured as **Event × Client pairs** and grouped by Market Event.
+
+The model learns nonlinear relationships between:
+
+```text
+Market Event
+×
+Client Exposure
+×
+Recent Needs
+×
+Mandate Compatibility
+×
+Commercial Relevance
+```
+
+and produces a ranked **Top-5/10 Sales opportunity list**.
+
+The resulting Match Score is a relative ranking measure, not a transaction probability.
+
+---
+
+## Models & Methods
+
+The project deliberately combines **deterministic controls** with **Machine Learning**:
+
+- **Cross-Asset Quantitative Signals** — Market Event detection
+- **NLP / Semantic Representations** — market and client textual relevance
+- **Hard Eligibility Rules** — mandate and risk screening
+- **Feature Engineering** — Event × Client commercial relevance
+- **XGBoost Learning-to-Rank** — client prioritisation
+- **Bootstrap Rank Stability** — selection-confidence diagnostics
+- **Explainable ML** — feature-level rationale for surfaced opportunities
+
+Model evaluation is performed on **unseen Market Events**, rather than randomly splitting Event × Client rows.
+
+The Model Lab reports:
 
 - NDCG@5 / NDCG@10
 - Precision@5 / Precision@10
 - Recall@5 / Recall@10
-
-Train and test splits are performed by **whole Market Events**, ensuring that test events are unseen by the model.
+- Train vs Test performance
+- Generalisation gap
+- Feature importance
+- Pair-feature diagnostics
 
 ---
 
 ## Streamlit Application
 
-The Streamlit interface contains three views.
+The project is delivered through an interactive Streamlit application designed around the Sales workflow.
 
 ### Who Should I Call?
 
-Select one or several Market Events and view the Top 5–10 ranked clients for each event.
+Sales users can select several live Market Events and review the **Top-5/10 ranked client opportunities** for each event.
 
-Each client card shows:
+Each client card displays:
 
 - Match Score
 - Selection Confidence
 - Market Confidence
-- Main matching reasons
+- Main matching rationale
 - Supporting market evidence
+
+The application also allows the user to:
+
+```text
+Refresh Market Intelligence
+        ↓
+Generate new Market Events
+        ↓
+Run Client Opportunity Matching
+        ↓
+Review updated Client Rankings
+```
 
 ### Model Lab
 
-Used for model inspection and diagnostics:
+A separate technical view provides:
 
 - Train vs Test ranking metrics
 - Feature importance
-- Pair-feature breakdown
-- Archetype explorer
+- Event × Client feature breakdown
+- Archetype inspection
 - Rank-stability diagnostics
 
-### Methodology
-
-A compact explanation of the market-data pipeline, client-processing logic, and matching architecture.
+This keeps the Sales interface simple while preserving model transparency and auditability.
 
 ---
 
 ## Data Transparency
 
-The project deliberately separates real and synthetic data.
+The project deliberately separates public market information from synthetic client data.
 
-- **Market data and public news** come from public sources.
-- **Client profiles and client history** are synthetic.
-- **Ranking labels** are benchmark annotations and are not real CRM outcomes.
+- **Market prices** come from public market-data sources.
+- **Financial news** comes from public sources and remains source-linked.
+- **Client profiles and interaction history** are synthetic.
+- **Client archetypes** represent generic institutional client types.
+- **Ranking labels** are benchmark relevance annotations, not observed CRM outcomes.
 
-The project therefore demonstrates the ranking architecture and Institutional Sales workflow rather than claiming real client-conversion prediction.
+The project therefore demonstrates a realistic **Global Markets Sales decision-support architecture** without claiming to predict actual client trading behaviour.
 
 ---
 
 ## Why This Project
 
-The core value of the project is not simply applying Machine Learning to financial data.
+The objective is not to build another market-prediction model.
 
-It demonstrates how market intelligence can be transformed into a practical **Institutional Sales coverage workflow**:
+The project focuses on a different Front Office problem:
 
 ```text
-Market Event
-    ↓
-Client Relevance
-    ↓
-Eligibility
-    ↓
-Prioritisation
-    ↓
-Explainable Sales Action
+Market Intelligence
+        ↓
+Client Coverage
+        ↓
+Mandate Eligibility
+        ↓
+Opportunity Matching
+        ↓
+Sales Prioritisation
+        ↓
+Explainable Client Action
 ```
 
-The objective is to help a Sales person focus attention faster while preserving **human judgement, traceability, and client constraints**.
+It demonstrates how **Cross-Asset Market Intelligence, Machine Learning and client-specific constraints** can be combined into a practical Global Markets Sales workflow.
+
+The final decision remains with the Sales person; the platform is designed to make the initial coverage-screening process **faster, more systematic and more explainable**.
