@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/
+
+models/
+outputs/
+
+.streamlit/
+.cache/
+
+.env
+*.key
+*.pem

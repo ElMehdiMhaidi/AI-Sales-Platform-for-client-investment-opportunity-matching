@@ -1,0 +1,11 @@
+archetype,typical_asset_classes,typical_regions,typical_currencies,typical_exposures,typical_needs,risk_capacity,archetype_max_event_strength,default_derivatives_allowed,typical_restrictions
+Large Bank,equity|rates|fx|credit|volatility,global|europe|us|uk,usd|eur|gbp|jpy,equity|rates|fx|credit|volatility,downside_hedging|duration_review|fixed-rate_hedging|corporate_fx_hedging|yield_enhancement,high,3.2,True,
+Regional Bank,rates|fx|credit,europe|uk,eur|gbp|usd,eur_rates|gbp_rates|eur_credit|fx,duration_review|fixed-rate_hedging|yield_lock-in|corporate_fx_hedging,medium,2.5,True,
+Global Asset Manager,equity|rates|fx|credit|commodity|volatility,global|europe|us|uk|japan,usd|eur|gbp|jpy,equity|rates|credit|fx|commodity|volatility,downside_hedging|risk_review|duration_review|recovery_participation|optional_hedge,high,3.2,True,
+Pension Fund,equity|rates|credit,europe|us|uk,eur|usd|gbp,duration|investment_grade|europe_equity|us_equity,duration_review|capital_preservation|downside_hedging|yield_lock-in,low,1.9,True,
+Insurance Company,rates|credit|equity|fx,europe|us|uk,eur|usd|gbp,duration|investment_grade|fx|equity,duration_review|capital_preservation|fixed-rate_hedging|fx_hedging,low,2.0,True,
+Macro Hedge Fund,equity|rates|fx|credit|commodity|volatility,global|europe|us|japan,usd|eur|gbp|jpy,equity|rates|fx|credit|commodity|volatility,relative_value|option_monetization|risk_review|optional_hedge|commodity_risk_review,very_high,3.5,True,
+Private Bank,equity|rates|fx|credit|volatility|commodity,global|europe|us|uk,eur|usd|gbp|chf,equity|rates|fx|credit|volatility|gold,yield_enhancement|option_monetization|downside_hedging|capital_preservation|recovery_participation,medium,2.7,True,
+Family Office,equity|rates|fx|credit|commodity,global|europe|us|uk,eur|usd|gbp|chf,equity|rates|fx|commodity|credit,capital_preservation|yield_enhancement|downside_hedging|commodity_risk_review|optional_hedge,medium,2.5,True,
+Large Corporate,fx|rates|commodity,global|europe|us|asia,eur|usd|gbp|jpy,fx|rates|commodity|energy,corporate_fx_hedging|fixed-rate_hedging|producer/consumer_hedging|commodity_risk_review|yield_lock-in,medium,2.8,True,
+Mid-Cap Corporate,fx|rates|commodity,europe|uk|us,eur|usd|gbp,fx|rates|commodity|energy,corporate_fx_hedging|fixed-rate_hedging|producer/consumer_hedging,low,2.1,True,
